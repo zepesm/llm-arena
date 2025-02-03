@@ -1,0 +1,99 @@
+.game-log {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.move-entry {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.move-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.move-info {
+  min-width: 80px;
+}
+
+.move-position {
+  color: #666;
+}
+
+.model-name {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 160px;
+}
+
+.model-name.player-x {
+  color: #2196f3;
+  background: #e3f2fd;
+}
+
+.model-name.player-o {
+  color: #4caf50;
+  background: #e8f5e9;
+}
+
+.random-move {
+  color: #dc3545;
+  margin-left: 10px;
+}
+
+.move-details {
+  font-size: 0.9em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.move-stats {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.timing,
+.tokens,
+.attempts {
+  color: #666;
+  display: inline-block;
+  padding: 2px 6px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.attempts {
+  color: #dc3545;
+  background: #fff3f3;
+}
+
+.prompt,
+.response {
+  margin-top: 10px;
+}
+
+pre {
+  background: #f1f3f5;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 5px 0;
+  font-size: 0.9em;
+  border: 1px solid #dee2e6;
+}

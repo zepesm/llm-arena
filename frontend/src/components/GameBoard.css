@@ -1,0 +1,137 @@
+.game-board {
+  margin: 20px 0;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  width: 300px;
+  margin: 0 auto;
+  background: #ccc;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.player-x {
+  color: #2196f3;
+  font-weight: bold;
+}
+
+.player-o {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+/* Make model names consistent across all places */
+.model-name.player-x,
+.model-name.player-o {
+  font-weight: bold;
+  font-size: inherit;
+}
+
+.cell:empty::before {
+  content: attr(data-position);
+  color: #999;
+  font-size: 24px;
+}
+
+.cell-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  width: 98px;
+  height: 98px;
+  background: #fff;
+  border-radius: 2px;
+  font-size: 48px;
+  font-weight: bold;
+  cursor: default;
+}
+
+.move-info {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.status {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+.game-stats {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.model-stats {
+  flex: 1;
+  max-width: 300px;
+  padding: 15px;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.model-name {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  font-size: 0.9em;
+  color: #666;
+  text-align: left;
+}
+
+.stats-grid > div:nth-child(odd) {
+  font-weight: 500;
+}
+
+.stats-grid > div:nth-child(even) {
+  text-align: right;
+}
+
+.model-x {
+  color: #2196f3; /* blue for X */
+  font-weight: bold;
+}
+
+.model-o {
+  color: #4caf50; /* green for O */
+  font-weight: bold;
+}
+
+.current-turn {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2em;
+}
+
+.game-result {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 1.4em;
+  font-weight: 500;
+}
+
+.winner-name {
+  font-weight: bold;
+}

@@ -1,0 +1,49 @@
+.rankings {
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rankings h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.rankings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.model-name {
+  font-weight: 500;
+}
+
+.model-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.model-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.model-stats span[title] {
+  cursor: help;
+}
