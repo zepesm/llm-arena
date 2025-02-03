@@ -119,6 +119,10 @@ function GameBoard({
     if (!move) return null;
 
     const parts = [];
+    // Find the move number (1-based index)
+    const moveNumber = moves.findIndex((m) => m.position === position) + 1;
+    parts.push(`#${moveNumber}`);
+
     // Show timing and tokens for every move
     const timing = move.interaction?.timingMs;
     if (timing) {
@@ -130,9 +134,6 @@ function GameBoard({
     if (tokens) {
       parts.push(`${tokens}t`);
     }
-
-    // Add random indicator at the end if it was a random move
-    if (move.isRandom) parts.push("random");
 
     return parts.length > 0 ? `(${parts.join(", ")})` : null;
   };
@@ -146,6 +147,15 @@ function GameBoard({
     if (isRandomMove(index)) classes.push("random-move");
     if (cell === "X") classes.push("player-x");
     if (cell === "O") classes.push("player-o");
+
+    // Add move number class if this cell has a move
+    const move = moves?.find((m) => m.position === index);
+    if (move) {
+      // Find the move number (1-based index) for this position
+      const moveNumber = moves.findIndex((m) => m.position === index) + 1;
+      classes.push(`move-${moveNumber}`);
+    }
+
     return classes.join(" ");
   };
 
@@ -202,11 +212,7 @@ function GameBoard({
       <div className="board">
         {board.map((cell, i) => (
           <div key={i} className="cell-container">
-            <div
-              className={`cell ${
-                cell === "X" ? "player-x" : cell === "O" ? "player-o" : ""
-              }`}
-            >
+            <div className={getCellClass(cell, i)}>
               {cell}
               {cell && getMoveInfo(i) && (
                 <div className="move-info">{getMoveInfo(i)}</div>
