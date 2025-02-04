@@ -1,0 +1,246 @@
+.cost-estimation {
+  margin-top: 30px;
+  padding: 0;
+  background: white;
+  width: 100%;
+}
+
+.cost-estimation h3 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #495057;
+  font-size: 1.2em;
+  font-weight: 600;
+  padding: 0 20px;
+}
+
+.cost-table table,
+.cost-projection table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  background: white;
+  border: 1px solid #dee2e6;
+  table-layout: fixed;
+}
+
+th {
+  background: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  text-align: left;
+  padding: 16px 24px;
+  border-bottom: 2px solid #dee2e6;
+  border-right: 1px solid #dee2e6;
+}
+
+th:last-child {
+  border-right: none;
+}
+
+/* Column widths */
+th:nth-child(1) {
+  width: 30%;
+} /* Model column */
+th:nth-child(2) {
+  width: 45%;
+} /* Tokens column */
+th:nth-child(3) {
+  width: 25%;
+} /* Cost column */
+
+td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e9ecef;
+  border-right: 1px solid #dee2e6;
+  color: #212529;
+  vertical-align: top;
+}
+
+td:last-child {
+  border-right: none;
+}
+
+/* Zebra striping */
+tbody tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+
+tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.token-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.9em;
+  background: transparent;
+}
+
+.token-row:first-child {
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.total-tokens-row {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.total-tokens-row .token-value {
+  font-weight: 600;
+}
+
+.total-cost-row {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.total-cost-row .cost-value {
+  color: #198754;
+  font-weight: 600;
+}
+
+.token-row span:first-child {
+  color: #6c757d;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.cost-value {
+  font-family: monospace;
+  font-size: 1.1em;
+  color: #198754;
+  font-weight: 500;
+  text-align: right;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.cost-cell {
+  font-family: monospace;
+  font-size: 1.1em;
+  color: #198754;
+  font-weight: 500;
+  text-align: right;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.total-row {
+  background: #f8f9fa !important;
+  font-weight: 600;
+  border-top: 2px solid #dee2e6;
+}
+
+.total-row .cost-cell {
+  color: #198754;
+  font-weight: 600;
+}
+
+.cost-disclaimer {
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.9em;
+  font-style: italic;
+  margin: 16px 0;
+  padding: 0 20px;
+  line-height: 1.4;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cost-projection {
+  margin-top: 24px;
+}
+
+.cost-projection th {
+  text-align: left;
+}
+
+.cost-projection td:first-child {
+  color: #495057;
+  font-weight: 500;
+}
+
+.cost-projection table {
+  margin: 0 auto;
+}
+
+/* Cost projection column widths */
+.cost-projection th:nth-child(1) {
+  width: 25%;
+}
+.cost-projection th:nth-child(2),
+.cost-projection th:nth-child(3),
+.cost-projection th:nth-child(4) {
+  width: 25%;
+}
+
+.cost-projection td.cost-cell {
+  position: relative;
+}
+
+.cost-projection td.cost-cell[data-value^="$"] {
+  background-color: rgba(25, 135, 84, 0.02);
+}
+
+@media (max-width: 768px) {
+  .cost-projection table {
+    font-size: 0.9em;
+  }
+
+  .cost-projection td,
+  .cost-projection th {
+    padding: 8px;
+  }
+}
+
+.current-model {
+  background-color: rgba(25, 135, 84, 0.05) !important;
+}
+
+.current-label {
+  font-size: 0.8em;
+  color: #198754;
+  background-color: rgba(25, 135, 84, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.tokenizer-label {
+  display: block;
+  font-size: 0.8em;
+  color: #6c757d;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.approx-label {
+  color: #6c757d;
+  margin-left: 4px;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+/* Style for approximated token counts */
+tr:not(.current-model) .token-value {
+  color: #495057;
+}
+
+/* Make approximated costs slightly muted */
+tr:not(.current-model):not(.total-row) td:last-child .cost-value {
+  opacity: 0.85;
+}

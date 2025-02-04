@@ -4,6 +4,11 @@
   "private": true,
   "proxy": "http://localhost:3001",
   "dependencies": {
+    "@anthropic-ai/tokenizer": "^0.0.4",
+    "gpt-tokenizer": "^2.8.1",
+    "gpt3-tokenizer": "^1.1.5",
+    "llama-tokenizer-js": "^1.2.2",
+    "mistral-tokenizer-js": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",

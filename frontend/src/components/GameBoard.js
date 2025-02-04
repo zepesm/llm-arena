@@ -1,5 +1,6 @@
 import React from "react";
 import "./GameBoard.css";
+import CostEstimation from "./CostEstimation";
 
 const GameStats = ({ moves, model1, model2 }) => {
   const getModelStats = (modelName) => {
@@ -125,11 +126,14 @@ function GameBoard({
 
     // Show timing and tokens for every move
     const timing = move.interaction?.timingMs;
+    console.log(move.interaction);
     if (timing) {
       parts.push(`${(timing / 1000).toFixed(1)}s`);
     }
 
-    const tokens = move.interaction?.promptTokens;
+    const tokens =
+      move.interaction?.promptTokens + move.interaction?.responseTokens;
+
     if (tokens) {
       parts.push(`${tokens}t`);
     }
@@ -214,6 +218,50 @@ function GameBoard({
     return null;
   };
 
+  const renderStats = () => {
+    if (!moves || moves.length === 0) return null;
+
+    const totalTime = moves.reduce(
+      (sum, move) => sum + (move.interaction?.timingMs || 0),
+      0
+    );
+    const totalTokens = moves.reduce(
+      (sum, move) =>
+        sum +
+        ((move.interaction?.promptTokens || 0) +
+          (move.interaction?.responseTokens || 0)),
+      0
+    );
+    const randomMoves = moves.filter((move) => move.isRandom).length;
+
+    return (
+      <div className="game-stats">
+        <div className="stat-item">
+          <span className="stat-label">Total Time</span>
+          <span className="stat-value">{(totalTime / 1000).toFixed(1)}s</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Moves</span>
+          <span className="stat-value">{moves.length}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Random Moves</span>
+          <span className="stat-value">{randomMoves}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Total Tokens</span>
+          <span className="stat-value">{totalTokens.toLocaleString()}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Avg Tokens/Move</span>
+          <span className="stat-value">
+            {(totalTokens / moves.length).toFixed(0)}
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="game-board">
       {renderCurrentTurn()}
@@ -234,6 +282,8 @@ function GameBoard({
       </div>
       <GameStats moves={moves} model1={model1} model2={model2} />
       {renderGameStatus()}
+      {renderStats()}
+      <CostEstimation moves={moves} model1={model1} model2={model2} />
     </div>
   );
 }

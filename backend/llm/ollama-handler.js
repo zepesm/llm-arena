@@ -197,12 +197,20 @@ class OllamaHandler {
       d) Prefer moves that create future winning chances
     
     LOOK-AHEAD ANALYSIS:
-    1. After your move, opponent will have these positions: [List remaining positions]
-    2. They could create threats in these lines: [List potential threat lines]
-    3. Your move should either:
-       - Block their strongest potential line
-       - Force them to block your winning attempt
-       - Create multiple winning opportunities
+    For each possible move:
+    1. If you play position [X]:
+       - What winning lines could YOU create next turn?
+       - What winning lines could OPPONENT create next turn?
+       - How many future winning possibilities for YOU?
+       - How many future winning possibilities for OPPONENT?
+    
+    STRATEGIC PRIORITIES:
+    1. Create TWO potential winning lines (a fork)
+    2. Block opponent from creating TWO potential winning lines
+    3. Create ONE potential winning line while blocking opponent's line
+    4. Take center (position 4) if available
+    5. Take corner (0,2,6,8) if available
+    6. Take side (1,3,5,7) if it creates future opportunities
 
     RESPONSE FORMAT:
     <think>
@@ -224,17 +232,24 @@ class OllamaHandler {
     3. Findings:
        - Critical threats: [List any lines with EXACTLY 2 opponent + 1 empty]
        - Winning moves: [List any lines with EXACTLY 2 yours + 1 empty]
-       - Opponent's potential next moves: [For each valid move, list opponent's best response]
+       - Future opportunities analysis:
+          * Position [X]: Creates winning lines [List], Blocks lines [List]
+          * Position [Y]: Creates winning lines [List], Blocks lines [List]
+          (Analyze each available position)
 
     4. Move validation:
        - Chosen position: [Number]
        - Confirms line: [Show complete line analysis]
        - Available: [Verify in ${validMoves.join(", ")}]
-       - After this move: [List opponent's best responses]
+       - Strategic value:
+          * Winning lines created: [List]
+          * Opponent lines blocked: [List]
+          * Future winning possibilities: [List]
 
     5. Strategy chosen:
        [Explain which priority rule led to your decision]
-       [Explain how this move affects opponent's next turn]
+       [Explain why this move is better than other options]
+       [List specific winning possibilities created]
     </think>
     [Single digit number]`;
 

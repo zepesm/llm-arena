@@ -104,24 +104,6 @@ function GamePage() {
         <div className="game-log-container">
           <GameLog moves={game.moves.moves} />
         </div>
-        <div className="game-stats">
-          <div className="stat-item">
-            <span className="stat-label">Total Time</span>
-            <span className="stat-value">
-              {(game.total_time / 1000).toFixed(1)}s
-            </span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-label">Avg Move Time</span>
-            <span className="stat-value">{game.stats.avgMoveTime}s</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-label">Avg Tokens</span>
-            <span className="stat-value">
-              {game.stats.avgRequestTokens}/{game.stats.avgResponseTokens}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );
