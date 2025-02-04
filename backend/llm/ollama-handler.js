@@ -53,29 +53,190 @@ class OllamaHandler {
       throw new Error("No valid moves available");
     }
 
-    const prompt = `You are playing Tic-tac-toe as player ${playerSymbol}. 
-Current board state:
-${boardStr}
+    const prompt = `IMPORTANT: This is a Tic-tac-toe game analysis ONLY.
+    You are playing Tic-tac-toe as player ${playerSymbol}. 
+    
+    Current board state (ANALYZE THIS EXACT BOARD):
+    ${boardStr}
+    
+    MOVE HISTORY:
+    ${
+      gameState.moves && gameState.game.moveCount > 0
+        ? gameState.moves
+            .map((move, index) => {
+              const moveNumber = index + 1;
+              const isYourMove =
+                (moveNumber % 2 === 1 && playerSymbol === "X") ||
+                (moveNumber % 2 === 0 && playerSymbol === "O");
+              return `Move #${moveNumber}: ${
+                isYourMove ? "YOU" : "OPPONENT"
+              } played position ${move.position}`;
+            })
+            .join("\n   ")
+        : "No moves yet"
+    }
+    
+    YOUR PREVIOUS MOVES: ${
+      gameState.moves
+        ? gameState.moves
+            .filter(
+              (move, index) =>
+                (playerSymbol === "X" && index % 2 === 0) ||
+                (playerSymbol === "O" && index % 2 === 1)
+            )
+            .map((move) => move.position)
+            .join(", ")
+        : "None"
+    }
+    
+    OPPONENT'S MOVES: ${
+      gameState.moves
+        ? gameState.moves
+            .filter(
+              (move, index) =>
+                (playerSymbol === "X" && index % 2 === 1) ||
+                (playerSymbol === "O" && index % 2 === 0)
+            )
+            .map((move) => move.position)
+            .join(", ")
+        : "None"
+    }
+    
+    THIS IS MOVE NUMBER: ${(gameState.moves?.length || 0) + 1}
+    
+    Available moves (MUST choose from these): ${validMoves.join(", ")}
+    
+    GAME RULES:
+    1. You MUST choose a number from available moves: ${validMoves.join(", ")}
+    2. Think using <think> tags
+    3. End with ONLY a single digit number
+    4. You are playing as ${playerSymbol}, opponent is ${
+      playerSymbol === "X" ? "O" : "X"
+    }
+    5. Goal: Get 3 of your symbols in a line (row, column, or diagonal)
 
-Available positions: ${validMoves.join(", ")}
+    BOARD POSITIONS (Use these numbers):
+    0 | 1 | 2
+    ---------
+    3 | 4 | 5
+    ---------
+    6 | 7 | 8
 
-RULES:
-1. You MUST choose a number from: ${validMoves.join(", ")}
-2. Think using <think> tags
-3. End with ONLY a single digit number
+    LINE DEFINITIONS:
+    - Rows: [0,1,2], [3,4,5], [6,7,8]
+    - Columns: [0,3,6], [1,4,7], [2,5,8]
+    - Diagonals: [0,4,8], [2,4,6]
 
-REQUIRED FORMAT:
-<think>
-Brief strategy
-</think>
-Single digit number - proposed position.
+    HOW TO COUNT SYMBOLS IN A LINE:
+    1. Pick ONE complete line from definitions above
+    2. Count EXACT number of each symbol in that line
+    3. List positions using board numbers
+    4. MUST have EXACTLY 3 positions in same line
 
-responds with:
-<think>
-Brief strategy
-</think>
-Single digit number - proposed valid move.
-`;
+    Example board:
+    ${playerSymbol} | ${playerSymbol === "X" ? "O" : "X"} | 2
+    ---------
+    ${playerSymbol === "X" ? "O" : "X"} | ${playerSymbol} | 5
+    ---------
+    6 | 7 | ${playerSymbol}
+
+    CORRECT counting examples:
+    ✓ Diagonal [0,4,8]: ${playerSymbol}[0] + ${playerSymbol}[4] + ${playerSymbol}[8] = 3 ${playerSymbol} (win)
+    ✓ Row 1 [0,1,2]: ${playerSymbol}[0] + ${
+      playerSymbol === "X" ? "O" : "X"
+    }[1] + empty[2] = 1 ${playerSymbol}, 1 ${playerSymbol === "X" ? "O" : "X"}
+    ✓ Column 1 [0,3,6]: ${playerSymbol}[0] + ${
+      playerSymbol === "X" ? "O" : "X"
+    }[3] + empty[6] = 1 ${playerSymbol}, 1 ${playerSymbol === "X" ? "O" : "X"}
+
+    INCORRECT counting (don't do this):
+    ❌ "Two symbols in line" (must list exact positions)
+    ❌ Mixing positions from different lines
+    ❌ Counting diagonal without center position
+    ❌ Counting incomplete lines
+
+    CRITICAL THREAT DEFINITION:
+    A line must have ALL of these:
+    1. EXACTLY 2 opponent symbols (list positions)
+    2. EXACTLY 1 empty space (list position)
+    3. ZERO of your symbols
+    4. All 3 positions in same line
+
+    Example threats:
+    ${playerSymbol === "X" ? "O" : "X"}[0] + ${
+      playerSymbol === "X" ? "O" : "X"
+    }[1] + empty[2] = THREAT
+    ${playerSymbol === "X" ? "O" : "X"}[0] + empty[4] + ${
+      playerSymbol === "X" ? "O" : "X"
+    }[8] = THREAT
+
+    NOT threats:
+    ${
+      playerSymbol === "X" ? "O" : "X"
+    }[0] + empty[1] + empty[2] = NOT THREAT (only 1 opponent)
+    ${playerSymbol === "X" ? "O" : "X"}[0] + ${
+      playerSymbol === "X" ? "O" : "X"
+    }[1] + ${playerSymbol}[2] = NOT THREAT (blocked)
+
+    WINNING MOVE DEFINITION:
+    A line must have ALL of these:
+    1. EXACTLY 2 of your symbols (list positions)
+    2. EXACTLY 1 empty space (list position)
+    3. ZERO opponent symbols
+    4. All 3 positions in same line
+
+    PRIORITY RULES:
+    1. If there's a winning move (2 of your symbols + 1 empty in a line) -> TAKE IT
+    2. If there's a critical threat (2 opponent symbols + 1 empty in a line) -> BLOCK IT
+    3. If you can create a fork (two potential winning lines) -> DO IT
+    4. If opponent can create a fork -> BLOCK IT
+    5. Otherwise -> Analyze opponent's potential next moves:
+      a) For each possible move you make
+      b) List opponent's best responses
+      c) Choose move that limits opponent's opportunities
+      d) Prefer moves that create future winning chances
+    
+    LOOK-AHEAD ANALYSIS:
+    1. After your move, opponent will have these positions: [List remaining positions]
+    2. They could create threats in these lines: [List potential threat lines]
+    3. Your move should either:
+       - Block their strongest potential line
+       - Force them to block your winning attempt
+       - Create multiple winning opportunities
+
+    RESPONSE FORMAT:
+    <think>
+    1. Board state confirmation:
+       - Current board: [Show exact board]
+       - Available moves: [List from ${validMoves.join(", ")}]
+       - Your symbol: ${playerSymbol}
+
+    2. Line-by-line analysis:
+       Row 1 [0,1,2]: [List symbols and positions]
+       Row 2 [3,4,5]: [List symbols and positions]
+       Row 3 [6,7,8]: [List symbols and positions]
+       Col 1 [0,3,6]: [List symbols and positions]
+       Col 2 [1,4,7]: [List symbols and positions]
+       Col 3 [2,5,8]: [List symbols and positions]
+       Diag 1 [0,4,8]: [List symbols and positions]
+       Diag 2 [2,4,6]: [List symbols and positions]
+
+    3. Findings:
+       - Critical threats: [List any lines with EXACTLY 2 opponent + 1 empty]
+       - Winning moves: [List any lines with EXACTLY 2 yours + 1 empty]
+       - Opponent's potential next moves: [For each valid move, list opponent's best response]
+
+    4. Move validation:
+       - Chosen position: [Number]
+       - Confirms line: [Show complete line analysis]
+       - Available: [Verify in ${validMoves.join(", ")}]
+       - After this move: [List opponent's best responses]
+
+    5. Strategy chosen:
+       [Explain which priority rule led to your decision]
+       [Explain how this move affects opponent's next turn]
+    </think>
+    [Single digit number]`;
 
     const getValidMove = async (attempt = 1) => {
       if (attempt > 3) {
@@ -105,15 +266,41 @@ Single digit number - proposed valid move.
           prompt:
             attempt === 1
               ? prompt
-              : `Invalid response. Use this format with a number from ${validMoves.join(
-                  ", "
-                )}:
-<think>
-Brief strategy
-</think>
-[DIGIT]
+              : `RETRY ATTEMPT ${attempt}: Previous response was invalid.
 
-End with ONLY the digit.`,
+You are playing Tic-tac-toe as player ${playerSymbol}. 
+Current board state:
+${boardStr}
+
+⚠️ PREVIOUS ATTEMPT FAILED - READ CAREFULLY:
+1. Your last move was invalid
+2. You can ONLY choose from these positions: ${validMoves.join(", ")}
+3. Any other number will be rejected
+
+CRITICAL RULES:
+1. VALID MOVES: ${validMoves.join(", ")} (ONLY these numbers are allowed)
+2. YOUR SYMBOL: ${playerSymbol}
+3. FORMAT: Use <think> tags, then end with single number
+4. IMPORTANT: The number MUST be one from valid moves list
+
+BOARD POSITIONS:
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
+
+STEP-BY-STEP INSTRUCTIONS:
+1. Look at the current board state above
+2. Choose ONE number from valid moves: ${validMoves.join(", ")}
+3. Explain your strategy in <think> tags
+4. End response with ONLY that number
+
+RESPONSE FORMAT:
+<think>
+Your strategy here...
+</think>
+[Type ONE of these numbers: ${validMoves.join(", ")}]`,
           stream: false,
           options: {
             temperature: 0.3,

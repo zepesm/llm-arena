@@ -2,6 +2,7 @@ class TicTacToe {
   constructor() {
     this.board = Array(9).fill(null);
     this.moveCount = 0;
+    this.moveHistory = [];
   }
 
   makeMove(position, player) {
@@ -10,6 +11,7 @@ class TicTacToe {
     }
     this.board[position] = player;
     this.moveCount++;
+    this.moveHistory.push({ position, player });
     if (this.board[position] !== player) {
       throw new Error(
         `Move verification failed: board[${position}] = ${this.board[position]}, expected ${player}`

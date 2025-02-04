@@ -1,7 +1,7 @@
 .App {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
 }
 
 .rankings table {
@@ -51,4 +51,108 @@ button:hover {
 button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.game-details {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  grid-template-areas:
+    "board"
+    "result"
+    "controls"
+    "stats"
+    "log";
+}
+
+.board {
+  grid-area: board;
+  margin: 10px auto;
+}
+
+.game-result {
+  grid-area: result;
+  text-align: center;
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.game-result .winner {
+  font-weight: bold;
+}
+
+.game-result .winner.player-x {
+  color: #2196f3;
+}
+
+.game-result .winner.player-o {
+  color: #4caf50;
+}
+
+.game-controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: center;
+  margin: 5px 0 15px;
+  padding: 5px;
+}
+
+.game-stats {
+  grid-area: stats;
+  grid-row: 2;
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 15px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.game-log-container {
+  grid-area: log;
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+/* Adjust back button spacing */
+.game-details button {
+  margin-bottom: 10px;
+}
+
+.replay-button {
+  background-color: #28a745;
+  padding: 10px 20px;
+  font-size: 14px;
+  width: auto;
+  min-width: 120px;
+}
+
+.replay-button:hover {
+  background-color: #218838;
+}
+
+.replay-button:disabled {
+  background-color: #6c757d;
 }

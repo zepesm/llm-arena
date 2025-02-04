@@ -41,19 +41,13 @@ app.get("/api/games", async (req, res) => {
           id,
           model1,
           model2,
-          game_type,
           winner,
-          moves,
           total_time,
           created_at,
           (
-            SELECT SUM(CASE 
-              WHEN json_extract(value, '$.interaction.timingMs') IS NOT NULL 
-              THEN json_extract(value, '$.interaction.timingMs') 
-              ELSE 0 
-            END)
+            SELECT COUNT(*)
             FROM json_each(json_extract(moves, '$.moves'))
-          ) as total_move_time,
+          ) as total_moves,
           (
             SELECT COUNT(*)
             FROM json_each(json_extract(moves, '$.moves'))
@@ -69,41 +63,7 @@ app.get("/api/games", async (req, res) => {
       );
     });
 
-    // Parse moves JSON for each game and add additional stats
-    const gamesWithStats = games.map((game) => {
-      const parsedMoves = JSON.parse(game.moves);
-      const movesStats = parsedMoves.moves.reduce(
-        (stats, move) => ({
-          totalRequestTokens:
-            stats.totalRequestTokens + (move.interaction?.promptTokens || 0),
-          totalResponseTokens:
-            stats.totalResponseTokens + (move.interaction?.responseTokens || 0),
-          moveCount: stats.moveCount + 1,
-        }),
-        { totalRequestTokens: 0, totalResponseTokens: 0, moveCount: 0 }
-      );
-
-      return {
-        ...game,
-        stats: {
-          avgMoveTime: (
-            game.total_move_time /
-            movesStats.moveCount /
-            1000
-          ).toFixed(1),
-          avgRequestTokens: (
-            movesStats.totalRequestTokens / movesStats.moveCount
-          ).toFixed(1),
-          avgResponseTokens: (
-            movesStats.totalResponseTokens / movesStats.moveCount
-          ).toFixed(1),
-          randomMoves: game.random_moves_count,
-          totalMoves: movesStats.moveCount,
-        },
-      };
-    });
-
-    res.json(gamesWithStats);
+    res.json(games);
   } catch (error) {
     console.error("Error fetching games:", error);
     res.status(500).json({ error: error.message });
@@ -335,6 +295,7 @@ async function processGame(gameId) {
           board: game.game.board,
           currentTurn: game.currentTurn,
           model1: game.model1,
+          moves: game.moves,
           game: game.game,
         });
 
@@ -447,7 +408,7 @@ app.post("/api/game/start", (req, res) => {
     gameType,
     currentTurn: model1,
     game: new TicTacToe(),
-    moves: [],
+    moves: [], // This array will store actual moves
     status: "active",
   });
 
@@ -466,6 +427,65 @@ app.get("/api/game/:gameId", (req, res) => {
     return res.status(404).json({ error: "Game not found" });
   }
   res.json(game);
+});
+
+app.get("/api/games/:gameId", async (req, res) => {
+  try {
+    const game = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT 
+          id,
+          model1,
+          model2,
+          game_type,
+          winner,
+          moves,
+          total_time,
+          created_at
+        FROM games 
+        WHERE id = ?`,
+        [req.params.gameId],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        }
+      );
+    });
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    // Parse moves JSON and add stats
+    const parsedMoves = JSON.parse(game.moves);
+    const movesStats = parsedMoves.moves.reduce(
+      (stats, move) => ({
+        totalRequestTokens:
+          stats.totalRequestTokens + (move.interaction?.promptTokens || 0),
+        totalResponseTokens:
+          stats.totalResponseTokens + (move.interaction?.responseTokens || 0),
+        moveCount: stats.moveCount + 1,
+      }),
+      { totalRequestTokens: 0, totalResponseTokens: 0, moveCount: 0 }
+    );
+
+    res.json({
+      ...game,
+      stats: {
+        avgMoveTime: (game.total_time / movesStats.moveCount / 1000).toFixed(1),
+        avgRequestTokens: (
+          movesStats.totalRequestTokens / movesStats.moveCount
+        ).toFixed(1),
+        avgResponseTokens: (
+          movesStats.totalResponseTokens / movesStats.moveCount
+        ).toFixed(1),
+        totalMoves: movesStats.moveCount,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching game:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 server.listen(port, () => {

@@ -126,16 +126,24 @@ function GameBoard({
     // Show timing and tokens for every move
     const timing = move.interaction?.timingMs;
     if (timing) {
-      const seconds = (timing / 1000).toFixed(1);
-      parts.push(`${seconds}s`);
+      parts.push(`${(timing / 1000).toFixed(1)}s`);
     }
 
-    const tokens = move.interaction?.responseTokens;
+    const tokens = move.interaction?.promptTokens;
     if (tokens) {
       parts.push(`${tokens}t`);
     }
 
-    return parts.length > 0 ? `(${parts.join(", ")})` : null;
+    // Extract thinking from response
+    const thinking = move.interaction?.response
+      ?.match(/<think>(.*?)<\/think>/s)?.[1]
+      ?.trim();
+
+    return {
+      info: parts.length > 0 ? `(${parts.join(", ")})` : null,
+      thinking,
+      model: move.model,
+    };
   };
 
   const isRandomMove = (index) => {
@@ -212,10 +220,13 @@ function GameBoard({
       <div className="board">
         {board.map((cell, i) => (
           <div key={i} className="cell-container">
-            <div className={getCellClass(cell, i)}>
+            <div
+              className={getCellClass(cell, i)}
+              title={getMoveInfo(i)?.thinking}
+            >
               {cell}
               {cell && getMoveInfo(i) && (
-                <div className="move-info">{getMoveInfo(i)}</div>
+                <div className="move-info">{getMoveInfo(i).info}</div>
               )}
             </div>
           </div>
