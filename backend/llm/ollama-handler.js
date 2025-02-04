@@ -318,7 +318,7 @@ Your strategy here...
 [Type ONE of these numbers: ${validMoves.join(", ")}]`,
           stream: false,
           options: {
-            temperature: 0.3,
+            temperature: 0.2,
             top_p: 0.9,
           },
         });

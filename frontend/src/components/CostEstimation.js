@@ -16,6 +16,7 @@ const MODEL_COSTS = {
     output: 0.00001, // $10.00 per million tokens
     name: "GPT-4o",
     tokenizer: "gpt",
+    temperature: 0.2, // Lower temperature for more precise analysis
   },
   "gpt-4-turbo": {
     input: 0.00001, // $10.00 per million tokens
